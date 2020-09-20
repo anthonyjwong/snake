@@ -5,17 +5,22 @@ let running = false;
 let pressed = false;
 
 let snake = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    length: 3,
-    speed: 5,
-    margin: 3,
-    size: 15,
-    direction: [],
-    body: []
+  x: canvas.width / 2,
+  y: canvas.height / 2,
+  length: 3,
+  speed: 5,
+  margin: 3,
+  size: 15,
+  direction: [],
+  body: [
+    { x: canvas.width / 2, y: canvas.height / 2 },
+    { x: canvas.width / 2 - 18, y: canvas.height / 2 },
+    { x: canvas.width / 2 - 36, y: canvas.height / 2 },
+  ],
 };
 
 const food = {
+    exists: false,
     size: 15
 };
 
@@ -24,19 +29,16 @@ function randInt(lo, hi) {
     return Math.floor((Math.random() * (hi - lo)) + lo);
 }
 
-
 function drawSnake() {
     context.fillStyle = '#ffffff';
-    context.fillRect(snake.x, snake.y, snake.size, snake.size)
 
-    for (let i = 0; i < snake.length; i++) {
-        break;
+    for (let i = 0; i < snake.body.length; i++) {
+         context.fillRect(snake.body[i].x, snake.body[i].y, snake.size, snake.size);
     }
 }
 
 function drawFood() {
-    context.fillStyle = '#ffffff';
-    context.fillRect(random.x, random.y, food.size, food.size)
+    
 }
 
 function drawMenu() {
@@ -54,29 +56,36 @@ function render() {
 
     drawSnake();
 
+    drawFood();
+
     if (running === false) {
-        drawMenu();
+        //drawMenu();
     }
 }
 
 function update() {
     // move snake
     if (snake.direction[0] === 'up') {
-        snake.y -= snake.size;
+        snake.body.pop();
+        snake.body.unshift({ x: snake.body[0].x, y: (snake.body[0].y - 18) });
     }
     else if (snake.direction[0] === 'down') {
-        snake.y += snake.size;
+        snake.body.pop();
+        snake.body.unshift({ x: snake.body[0].x, y: (snake.body[0].y + 18) });
     }
     else if (snake.direction[0] === 'left') {
-        snake.x -= snake.size;
+        snake.body.pop();
+        snake.body.unshift({ x: snake.body[0].x - 18, y: (snake.body[0].y) });
     }
     else if (snake.direction[0] === 'right') {
-        snake.x += snake.size;
+        snake.body.pop();
+        snake.body.unshift({ x: snake.body[0].x + 18, y: (snake.body[0].y) });
     }
 
     if (snake.direction.length > 1) {
         snake.direction.shift();
     }
+    console.log(snake.body);
 }
 
 function gameLoop() {
@@ -94,40 +103,38 @@ function keyDownHandler(event) {
         running = true;
     }
 
-    if (!pressed) {
-        switch (event.keyCode) {
-            // up arrow or w key
-            case 38:
-            case 87:
-                if (snake.direction[snake.direction.length - 1] != 'up' && snake.direction[snake.direction.length - 1] != 'down') {
-                    snake.direction.push('up');
-                }
-                break;
+    switch (event.keyCode) {
+        // up arrow or w key
+        case 38:
+        case 87:
+            if (snake.direction[snake.direction.length - 1] != 'up' && snake.direction[snake.direction.length - 1] != 'down') {
+                snake.direction.push('up');
+            }
+            break;
             
-            // down arrow or s key
-            case 40:
-            case 83:
-                if (snake.direction[snake.direction.length - 1] != 'down' && snake.direction[snake.direction.length - 1] != 'up') {
-                    snake.direction.push('down');
-                }                
-                break;
+        // down arrow or s key
+        case 40:
+        case 83:
+            if (snake.direction[snake.direction.length - 1] != 'down' && snake.direction[snake.direction.length - 1] != 'up') {
+                snake.direction.push('down');
+            }                
+            break;
 
-            // left arrow or a key
-            case 37:
-            case 65:
-                if (snake.direction[snake.direction.length - 1] != 'left' && snake.direction[snake.direction.length - 1] != 'right') {
-                    snake.direction.push('left');
-                }
-                break;
+        // left arrow or a key
+        case 37:
+        case 65:
+            if (snake.direction[snake.direction.length - 1] != 'left' && snake.direction[snake.direction.length - 1] != 'right') {
+                snake.direction.push('left');
+            }
+            break;
 
-            // right arrow or d key
-            case 39:
-            case 68:
-                if (snake.direction[snake.direction.length - 1] != 'right' && snake.direction[snake.direction.length - 1] != 'left') {
-                    snake.direction.push('right');
-                }
-                break;
-        }
+        // right arrow or d key
+        case 39:
+        case 68:
+            if (snake.direction[snake.direction.length - 1] != 'right' && snake.direction[snake.direction.length - 1] != 'left') {
+                snake.direction.push('right');
+            }
+            break;
     }
 }
 
