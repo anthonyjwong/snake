@@ -2,26 +2,30 @@ const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
 let running = false;
-let pressed = false;
 
 let snake = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
   length: 3,
   speed: 5,
   margin: 3,
   size: 15,
   direction: [],
   body: [
-    { x: canvas.width / 2, y: canvas.height / 2 },
-    { x: canvas.width / 2 - 18, y: canvas.height / 2 },
-    { x: canvas.width / 2 - 36, y: canvas.height / 2 },
-  ],
+    { x: 255, y: 183 },
+    { x: 237, y: 183 },
+    { x: 219, y: 183 },
+  ]
 };
 
 const food = {
     exists: false,
     size: 15
+};
+
+const opposite = {
+    up: 'down',
+    down: 'up',
+    left: 'right',
+    right: 'left'
 };
 
 function randInt(lo, hi) {
@@ -50,6 +54,32 @@ function drawMenu() {
     context.fillText('press any key to begin', canvas.width / 5 + 3, canvas.height / 2 + 10);
 }
 
+/* figure out game over stuff later */
+function gameOver() {
+    // context.fillStyle = "#2c3e50";
+    // context.fillRect(canvas.width / 2 - 350, canvas.height / 2 - 50, 700, 100);
+
+    // context.fillStyle = "#ffffff";
+    // context.font = "40px Monaco";
+    // context.fillText("game over", canvas.width / 3 + 35, canvas.height / 2 + 100);
+
+    // running = false;
+    // setTimeout(gameLoop, 3000);
+}
+
+function moveSnake(dir) {
+    // only remembers past 3 inputs, so key spamming doesn't ruin the movement
+    if (snake.direction.length < 3) {
+        if (snake.direction[snake.direction.length - 1] != dir && snake.direction[snake.direction.length - 1] != opposite[dir]) {
+            snake.direction.push(dir);
+        }
+    }
+}
+
+function eat() {
+
+}
+
 function render() {
     context.fillStyle = '#2c3e50';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -59,7 +89,7 @@ function render() {
     drawFood();
 
     if (running === false) {
-        //drawMenu();
+        drawMenu();
     }
 }
 
@@ -85,7 +115,25 @@ function update() {
     if (snake.direction.length > 1) {
         snake.direction.shift();
     }
-    console.log(snake.body);
+
+    // wall collision detection
+    let head = snake.body[0];
+    if (head.x < 0) {
+        console.log('off left')
+        gameOver();
+    }
+    else if (head.x + snake.size > canvas.width) {
+        console.log("off right");
+        gameOver();
+    }
+    else if (head.y < 0) {
+        console.log("off top");
+        gameOver();
+    }
+    else if (head.y + snake.size > canvas.height) {
+        console.log("off bottom");
+        gameOver();
+    }
 }
 
 function gameLoop() {
@@ -101,40 +149,34 @@ window.addEventListener('keydown', keyDownHandler);
 function keyDownHandler(event) {
     if (running === false) {
         running = true;
+        snake.direction.push("right");
     }
-
-    switch (event.keyCode) {
-        // up arrow or w key
-        case 38:
-        case 87:
-            if (snake.direction[snake.direction.length - 1] != 'up' && snake.direction[snake.direction.length - 1] != 'down') {
-                snake.direction.push('up');
-            }
-            break;
-            
-        // down arrow or s key
-        case 40:
-        case 83:
-            if (snake.direction[snake.direction.length - 1] != 'down' && snake.direction[snake.direction.length - 1] != 'up') {
-                snake.direction.push('down');
-            }                
+    else{
+        switch (event.keyCode) {
+          // up arrow or w key
+          case 38:
+          case 87:
+            moveSnake('up');
             break;
 
-        // left arrow or a key
-        case 37:
-        case 65:
-            if (snake.direction[snake.direction.length - 1] != 'left' && snake.direction[snake.direction.length - 1] != 'right') {
-                snake.direction.push('left');
-            }
+          // down arrow or s key
+          case 40:
+          case 83:
+            moveSnake('down');
             break;
 
-        // right arrow or d key
-        case 39:
-        case 68:
-            if (snake.direction[snake.direction.length - 1] != 'right' && snake.direction[snake.direction.length - 1] != 'left') {
-                snake.direction.push('right');
-            }
+          // left arrow or a key
+          case 37:
+          case 65:
+            moveSnake('left');
             break;
+
+          // right arrow or d key
+          case 39:
+          case 68:
+            moveSnake('right');
+            break;
+        }
     }
 }
 
