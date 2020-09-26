@@ -17,8 +17,11 @@ let snake = {
 };
 
 const food = {
+    x: 0,
+    y: 0,
     exists: false,
-    size: 15
+    size: 15,
+    color: "#e74c3c",
 };
 
 const opposite = {
@@ -33,6 +36,15 @@ function randInt(lo, hi) {
     return Math.floor((Math.random() * (hi - lo)) + lo);
 }
 
+function generateFood() {
+    // sets random coordinates for food
+    let x = randInt(0, 900);
+    food.x = (Math.floor(x / 18) * 18) + 3
+
+    let y = randInt(0, 612); 
+    food.y = (Math.floor(y / 18) * 18) + 3;
+}
+
 function drawSnake() {
     context.fillStyle = '#ffffff';
 
@@ -42,7 +54,12 @@ function drawSnake() {
 }
 
 function drawFood() {
+    context.fillStyle = food.color;
     
+    // generate random coordinates for food
+    generateFood();
+    console.log(food.x, food.y);
+    context.fillRect(food.x, food.y, food.size, food.size);
 }
 
 function drawMenu() {
@@ -68,7 +85,7 @@ function gameOver() {
 }
 
 function moveSnake(dir) {
-    // only remembers past 3 inputs, so key spamming doesn't ruin the movement
+    // only remembers past 3 inputs, so key spamming doesn't ruin movement
     if (snake.direction.length < 3) {
         if (snake.direction[snake.direction.length - 1] != dir && snake.direction[snake.direction.length - 1] != opposite[dir]) {
             snake.direction.push(dir);
@@ -112,6 +129,7 @@ function update() {
         snake.body.unshift({ x: snake.body[0].x + 18, y: (snake.body[0].y) });
     }
 
+    // makes sure that snake has a direction to move in
     if (snake.direction.length > 1) {
         snake.direction.shift();
     }
@@ -134,6 +152,9 @@ function update() {
         console.log("off bottom");
         gameOver();
     }
+
+    // food generation
+    drawFood();
 }
 
 function gameLoop() {
