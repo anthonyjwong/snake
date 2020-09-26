@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
 let running = false;
+let foodExists = false;
 
 let snake = {
   length: 3,
@@ -36,13 +37,15 @@ function randInt(lo, hi) {
     return Math.floor((Math.random() * (hi - lo)) + lo);
 }
 
-function generateFood() {
-    // sets random coordinates for food
+function generateCoords() {
+    // generates a random valid coordinate pair
     let x = randInt(0, 900);
-    food.x = (Math.floor(x / 18) * 18) + 3
+    x = (Math.floor(x / 18) * 18) + 3
 
     let y = randInt(0, 612); 
-    food.y = (Math.floor(y / 18) * 18) + 3;
+    y = (Math.floor(y / 18) * 18) + 3;
+
+    return [x, y];
 }
 
 function drawSnake() {
@@ -56,9 +59,16 @@ function drawSnake() {
 function drawFood() {
     context.fillStyle = food.color;
     
-    // generate random coordinates for food
-    generateFood();
-    console.log(food.x, food.y);
+    // generate random coordinates for food if the food doesn't exist already
+    if (!foodExists) {
+        coords = generateCoords();
+
+        food.x = coords[0];
+        food.y = coords[1];
+
+        foodExists = true;
+    }
+   
     context.fillRect(food.x, food.y, food.size, food.size);
 }
 
