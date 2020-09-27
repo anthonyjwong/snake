@@ -114,20 +114,20 @@ function eat() {
     snake.score += 100;
 
     // add segment to snake
-    let lastSegment = snake.body[snake.length - 1];
-    let secondToLastSegment = snake.body[snake.length - 2];
+    let lastSegment = snake.body[snake.body.length - 1];
+    let secondToLastSegment = snake.body[snake.body.length - 2];
 
     if (secondToLastSegment.x > lastSegment.x) {
-        snake.body.push({ x: snake.body[0].x + 18, y: snake.body[0].y });
+        snake.body.push({ x: lastSegment.x + 18, y: lastSegment.y });
     }
     else if (secondToLastSegment.y > lastSegment.y) {
-        snake.body.push({ x: snake.body[0].x, y: snake.body[0].y + 18 });
+        snake.body.push({ x: lastSegment.x, y: lastSegment.y + 18 });
     }
     else if (secondToLastSegment.x < lastSegment.x) {
-        snake.body.push({ x: snake.body[0].x - 18, y: snake.body[0].y });
+        snake.body.push({ x: lastSegment.x - 18, y: lastSegment.y });
     }
     else if (secondToLastSegment.y < lastSegment.y) {
-      snake.body.push({ x: snake.body[0].x, y: snake.body[0].y - 18 });
+      snake.body.push({ x: lastSegment.x, y: lastSegment.y - 18 });
     }
 
     // game isn't getting faster atm
