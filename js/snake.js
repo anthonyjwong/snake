@@ -5,7 +5,6 @@ let running = false;
 let foodExists = false;
 
 let snake = {
-  length: 3,
   speed: 5,
   margin: 3,
   size: 15,
@@ -14,7 +13,8 @@ let snake = {
     { x: 255, y: 183 },
     { x: 237, y: 183 },
     { x: 219, y: 183 },
-  ]
+  ],
+  score: 0,
 };
 
 const food = {
@@ -104,7 +104,34 @@ function moveSnake(dir) {
 }
 
 function eat() {
+    foodExists = false;
+    
+    //ensures that food isn't eaten more than once
+    food.x = -18;
+    food.y = -18;
 
+    // increase score
+    snake.score += 100;
+
+    // add segment to snake
+    let lastSegment = snake.body[snake.length - 1];
+    let secondToLastSegment = snake.body[snake.length - 2];
+
+    if (secondToLastSegment.x > lastSegment.x) {
+        snake.body.push({ x: snake.body[0].x + 18, y: snake.body[0].y });
+    }
+    else if (secondToLastSegment.y > lastSegment.y) {
+        snake.body.push({ x: snake.body[0].x, y: snake.body[0].y + 18 });
+    }
+    else if (secondToLastSegment.x < lastSegment.x) {
+        snake.body.push({ x: snake.body[0].x - 18, y: snake.body[0].y });
+    }
+    else if (secondToLastSegment.y < lastSegment.y) {
+      snake.body.push({ x: snake.body[0].x, y: snake.body[0].y - 18 });
+    }
+
+    // game isn't getting faster atm
+    snake.speed += 1;
 }
 
 function render() {
@@ -165,6 +192,10 @@ function update() {
 
     // food generation
     drawFood();
+
+    if (head.x === food.x && head.y === food.y) {
+        eat();
+    }
 }
 
 function gameLoop() {
