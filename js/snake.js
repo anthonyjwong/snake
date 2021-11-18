@@ -131,7 +131,9 @@ function eat() {
     }
 
     // game isn't getting faster atm
-    snake.speed += 1;
+    snake.speed += .01;
+    //clearInterval();
+    //setInterval(gameLoop, 1000 / snake.speed);
 }
 
 function render() {
@@ -243,4 +245,4 @@ function keyDownHandler(event) {
 }
 
 // calls gameLoop() 60 times per second aka set game to run at 60 fps
-setInterval(gameLoop, 1000 / snake.speed);
+setInterval(gameLoop, 1000);
